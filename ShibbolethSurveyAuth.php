@@ -23,14 +23,19 @@ class ShibbolethSurveyAuth extends AbstractExternalModule
 	public function redcap_survey_page_top($project_id, $record, $instrument, $event, $group, $survey)
 	{
 		$auth = $_GET["auth"] ?? $_COOKIE["ShibbolethSurveyAuth"];
-		$session = $_COOKIE["survey"]; // Session id used for surveys
+		$session = null;
+		foreach ($_COOKIE as $key => $value) {
+			$session = str_starts_with($key, "redcap_survey_session_") ? $value : $session;
+		}
 		$item = $this->getSystemSetting("user-item");
 		$user = $_SERVER[empty($item) ? $this->defaultItem : $item];
 		$time = time();
 
 		// If unauthenticated, kick to login
-		if (empty($auth) || empty($user))
+		if (empty($auth) || empty($user)) {
 			$this->sendToAuthPage($survey);
+			return;
+		}
 
 		// Calc valid hashes
 		$grace = intval($this->getSystemSetting("grace"));
@@ -39,8 +44,10 @@ class ShibbolethSurveyAuth extends AbstractExternalModule
 			$validHashList[] = $this->makeHash($project_id, $session, $user, $time - (60 * $i));
 
 		// Check if hash is invalid, kick to login
-		if (!in_array($auth, $validHashList))
+		if (!in_array($auth, $validHashList)) {
 			$this->sendToAuthPage($survey);
+			return;
+		}
 
 		// Log a successful authentication
 		REDCap::logEvent("Authenticated Survey", "User: $user", null, $record, $event, $project_id);
@@ -77,6 +84,5 @@ class ShibbolethSurveyAuth extends AbstractExternalModule
 	{
 		$url = $this->getUrl("login.php", true); // No auth url
 		header("Location: $url&s=$survey");
-		$this->exitAfterHook();
 	}
 }

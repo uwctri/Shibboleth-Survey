@@ -2,7 +2,7 @@
 // Being able to access this page means the user has logged in
 // http://localhost.edu/redcap_v99.9.99/ExternalModules/?prefix=shibboleth_survey_auth&page=login&pid=16&s=1234567890
 $generic_error = "Unable to authenticate user. Please contact your REDCap administrator.";
-$session = $_COOKIE["survey"];
+$session = null;
 foreach ($_COOKIE as $key => $value) {
     $session = str_starts_with($key, "redcap_survey_session_") ? $value : $session;
 }
@@ -19,7 +19,7 @@ if (empty($session)) {
 }
 
 // Check for bad configuration or something else went wrong
-if (empty($survey) || empty($user))
+if (empty($survey) || empty($user) || empty($session))
     die($generic_error);
 
 // Check if user is on the allowlist
