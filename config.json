@@ -2,15 +2,20 @@
     "name": "Shibboleth Survey Auth",
     "description": "Force all surveys on a project to require SSO to access. No project level configuration necessary.",
     "documentation": "README.md",
-    "namespace": "Geisinger\\ShibbolethSurveyAuth",
+    "namespace": "UWMadison\\ShibbolethSurveyAuth",
     "authors": [
         {
             "name": "Adam Nunez",
-            "email": "anunez3@geisinger.edu",
+            "email": "Adam.Nunez@ctri.wisc.edu",
+            "institution": "UW Madison - Center for Tobacco Research and Intervention"
+        },
+        {
+            "name": "Kenneth Borthwick",
+            "email": "kmborthwick@geisinger.edu",
             "institution": "Geisinger Health"
         }
     ],
-    "framework-version": 14,
+    "framework-version": 17,
     "action-tags": [
         {
             "tag": "@SSOUSER",
