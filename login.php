@@ -3,15 +3,24 @@
 // http://localhost.edu/redcap_v99.9.99/ExternalModules/?prefix=shibboleth_survey_auth&page=login&pid=16&s=1234567890
 $generic_error = "Unable to authenticate user. Please contact your REDCap administrator.";
 $session = $_COOKIE["survey"];
+foreach ($_COOKIE as $key => $value) {
+	$session = str_starts_with($key, "redcap_survey_session_") ? $value : $session;
+}
 $survey = $_GET["s"];
 $time = time();
 $item = $module->getSystemSetting("user-item");
 $allowlist = $module->getProjectSetting("allowlist") == "1";
 $user = $_SERVER[empty($item) ? $module->defaultItem : $item];
 
+// No session, try to refresh
+if (empty($session)) {
+	header("Refresh:0");
+	exit;
+}
+
 // Check for bad configuration or something else went wrong
-if (empty($survey) || empty($user) || empty($session))
-    die($generic_error);
+if (empty($survey) || empty($user))
+    die($generic_error . "$survey $user $session");
 
 // Check if user is on the allowlist
 if ($allowlist) {
