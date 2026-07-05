@@ -19,7 +19,7 @@ if (empty($session)) {
 }
 
 // Check for bad configuration or something else went wrong
-if (empty($survey) || empty($user) || empty($session))
+if (empty($survey) || empty($user) || empty($session) || !preg_match('/^[A-Za-z0-9]{16}$/', $survey))
     die($generic_error);
 
 // Check if user is on the allowlist
