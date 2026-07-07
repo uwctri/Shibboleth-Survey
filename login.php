@@ -6,7 +6,7 @@ $session = null;
 foreach ($_COOKIE as $key => $value) {
     $session = str_starts_with($key, "redcap_survey_session_") ? $value : $session;
 }
-$survey = $_GET["s"];
+$survey = $module->escape($_GET["s"]);
 $time = time();
 $item = $module->getSystemSetting("user-item");
 $allowlist = $module->getProjectSetting("allowlist") == "1";
