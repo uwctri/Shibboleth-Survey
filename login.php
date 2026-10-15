@@ -9,7 +9,7 @@ $session = null;
 foreach ($_COOKIE as $key => $value) {
     $session = str_starts_with($key, "redcap_survey_session_") ? $value : $session;
 }
-$survey = $_GET["s"];
+$survey = $_GET["s"] ?? "";
 $time = time();
 $item = $module->getSystemSetting("user-item");
 $allowlist = $module->getProjectSetting("allowlist") == "1";
@@ -24,6 +24,10 @@ if (empty($session)) {
 // Check for bad configuration or something else went wrong
 if (empty($survey) || empty($user) || empty($session) || !preg_match('/^[A-Za-z0-9]{16}$/', $survey))
     die($generic_error);
+
+// Normalize the survey code before using it in a redirect; it is expected to be a fixed
+// alphanumeric token and this prevents tainted input from flowing into the header.
+$survey = rawurlencode($survey);
 
 // Check if user is on the allowlist
 if ($allowlist) {
