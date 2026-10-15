@@ -22,7 +22,7 @@ class ShibbolethSurveyAuth extends AbstractExternalModule
 
 	public function redcap_survey_page_top($project_id, $record, $instrument, $event, $group, $survey)
 	{
-		$auth = $_GET["auth"] ?? $_COOKIE["ShibbolethSurveyAuth"];
+		$auth = $_COOKIE["ShibbolethSurveyAuth"] ?? null;
 		$session = null;
 		foreach ($_COOKIE as $key => $value) {
 			$session = str_starts_with($key, "redcap_survey_session_") ? $value : $session;
@@ -85,5 +85,6 @@ class ShibbolethSurveyAuth extends AbstractExternalModule
 	{
 		$url = $this->getUrl("login.php", true); // No auth url
 		header("Location: $url&s=$survey");
+		exit;
 	}
 }

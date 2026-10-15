@@ -34,8 +34,15 @@ if ($allowlist) {
 
 // Build hash and redirect to survey
 $hash = $module->makeHash($project_id, $session, $user, $time);
-$base = "http" . (empty($_SERVER["HTTPS"]) ? "" : "s") . "://" . $_SERVER["HTTP_HOST"];
+$base = defined("APP_PATH_WEBROOT_FULL") ? rtrim(APP_PATH_WEBROOT_FULL, "/") . "/" : ("https://" . $_SERVER["HTTP_HOST"] . "/");
 
 // Set cookie and redirect
-setcookie("ShibbolethSurveyAuth", $hash, 0, "/");
-header("Location: $base/surveys/?s=$survey&auth=$hash");
+setcookie("ShibbolethSurveyAuth", $hash, [
+    "expires" => 0,
+    "path" => "/",
+    "secure" => !empty($_SERVER["HTTPS"]),
+    "httponly" => true,
+    "samesite" => "Lax",
+]);
+header("Location: {$base}surveys/?s={$survey}");
+exit;
